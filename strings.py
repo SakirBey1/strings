@@ -1,18 +1,77 @@
-from telethon.sync import TelegramClient
-from telethon.sessions import StringSession
+import os
+os.system('clear')
 
-with TelegramClient(StringSession(string), api_id, api_hash) as client:
-    ...  # use the client
+welcome = """
+Merhaba HerlockUserBot string alıcıya hoş geldiniz...!
 
-    # Save the string session as a string; you should decide how
-    # you want to save this information (over a socket, remote
-    # database, print it and then paste the string in the code,
-    # etc.); the advantage is that you don't need to save it
-    # on the current disk as a separate file, and can be reused
-    # anywhere else once you log in.
-    string = client.session.save()
+Get the pyrogram & telethon session string from here
 
-# Note that it's also possible to save any other session type
-# as a string by using ``StringSession.save(session_instance)``:
-client = TelegramClient('sqlite-session', api_id, api_hash)
-string = StringSession.save(client.session)
+Get your API_ID and API_HASH from my.telegram.org
+"""
+print(welcome)
+
+lib = """
+Choose session string type:
+
+p - Pyrogram 
+t - Telethon 
+q - stop all process
+
+"""
+ask = input(lib)
+
+if ask == "p":
+	print("\nyou selected Pyrogram")
+	import pyrogram
+	API_ID = input(" API_ID Giriniz : ")
+	API_HASH = input(" API_HASH Giriniz : ")
+
+	with pyrogram.Client(":memory:", api_id=API_ID, api_hash=API_HASH) as client:
+	  session_str = client.export_session_string()
+	  info = client.get_me()
+	  fname = info.first_name
+	  if info.is_bot == True:
+	      id_send = input(f"I see, You gave the Bot Token to Generate String Session, \nStart the {info.username}\nSend /id to @MissRose_bot and Enter the ID which She gave: ")
+	      msg = client.send_message(id_send, f"```{session_str}```")
+	      msg.reply_text("""☝️ This is your Pyrogram String Session of this Bot
+        
+        💭 Join @HerlockSupport1""")
+	      exit("Check the Bot PM to get the String Session")
+
+	  msg = client.send_message("me", f"`{session_str}`")
+	  msg.reply_text("""
+👆 Bu, pirogram dizesi oturumunuz
+
+💭 Join @HerlockSupport1
+""")
+	  print(f"\nSuccessfully Logged in as {fname}  \n\nCheck the User's Saved Messages for the Pyrogram String Session")
+
+elif ask == "t":
+	print("\nyou selected Telethon")
+	from telethon.sync import TelegramClient
+	from telethon.sessions import StringSession
+
+	API_ID = input(" API_ID Giriniz : ")
+	API_HASH = input("API_HASH Giriniz : ")
+
+	with TelegramClient(StringSession(), API_ID, API_HASH) as client:
+		session_str = client.session.save()
+		msg = client.send_message("me", f"`{session_str}`")
+		msg.reply("""
+👆 Yukarıdaki string sizin.
+
+💭 Join @HerlockSupport1
+""")
+		print("\nCheck your saved messages for the Telethon String Session")
+
+elif ask == "q":
+	print("stopped all proccess")
+	exit()
+
+else:
+  print("""
+  Invalid Option Selected
+  Please only Choose between p/t
+  Stopping all Process
+  Restart Replit
+""")
